@@ -1,0 +1,100 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+datasource db {
+  provider = "postgresql"
+
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model football_match {
+  id                                       Int      @id @default(autoincrement())
+  match_datetime                           DateTime @db.Timestamp(6)
+  home_team_name                           String   @db.VarChar(100)
+  away_team_name                           String   @db.VarChar(100)
+  stadium_name                             String   @db.VarChar(100)
+  team_football_match_away_team_nameToteam team     @relation("football_match_away_team_nameToteam", fields: [away_team_name], references: [name], onDelete: NoAction, onUpdate: NoAction)
+  team_football_match_home_team_nameToteam team     @relation("football_match_home_team_nameToteam", fields: [home_team_name], references: [name], onDelete: NoAction, onUpdate: NoAction)
+  stadium                                  stadium  @relation(fields: [stadium_name], references: [name], onDelete: NoAction, onUpdate: NoAction)
+  ticket                                   ticket[]
+}
+
+model seat {
+  name         String   @db.VarChar(10)
+  section_name String   @db.VarChar(100)
+  stadium_name String   @db.VarChar(100)
+  section      section  @relation(fields: [stadium_name, section_name], references: [stadium_name, name], onDelete: NoAction, onUpdate: NoAction)
+  ticket       ticket[]
+
+  @@id([stadium_name, section_name, name])
+}
+
+model section {
+  stadium_name String  @db.VarChar(100)
+  name         String  @db.VarChar(100)
+  price        Decimal @db.Decimal(10, 2)
+  seat         seat[]
+  stadium      stadium @relation(fields: [stadium_name], references: [name], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([stadium_name, name])
+}
+
+model stadium {
+  name           String           @id @db.VarChar(100)
+  football_match football_match[]
+  section        section[]
+  team           team[]
+}
+
+model team {
+  name                                               String           @id @db.VarChar(100)
+  logo                                               String           @db.VarChar(255)
+  stadium_name                                       String           @db.VarChar(100)
+  football_match_football_match_away_team_nameToteam football_match[] @relation("football_match_away_team_nameToteam")
+  football_match_football_match_home_team_nameToteam football_match[] @relation("football_match_home_team_nameToteam")
+  stadium                                            stadium          @relation(fields: [stadium_name], references: [name], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ticket {
+  id             Int            @id @default(autoincrement())
+  user_id        Int
+  match_id       Int
+  seat_name      String         @db.VarChar(10)
+  section_name   String         @db.VarChar(100)
+  stadium_name   String         @db.VarChar(100)
+  football_match football_match @relation(fields: [match_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  seat           seat           @relation(fields: [stadium_name, section_name, seat_name], references: [stadium_name, section_name, name], onDelete: NoAction, onUpdate: NoAction)
+  user           user           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([match_id, stadium_name, section_name, seat_name], map: "ticket_unique_check")
+}
+
+model user {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  password     String   @db.VarChar(255)
+  phone_number String @unique   @db.VarChar(20)
+   role                 UserRole @default(USER)
+  ticket       ticket[]
+  password_reset_token password_reset_token[]
+}
+
+model password_reset_token {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token_hash String   @db.VarChar(255)
+  expires_at DateTime @db.Timestamp(6)
+  used_at    DateTime? @db.Timestamp(6)
+
+  user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([expires_at])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
