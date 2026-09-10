@@ -44,7 +44,7 @@ The project follows Clean Architecture principles with a clear separation betwee
 Swagger / OpenAPI documentation is available at:
 
 ```text
-http://localhost:3000/docs
+[https://tazkarty-backend-zvix-k9l6nk2y8-mahmoudahmedengcs-projects.vercel.app/]
 ```
 
 ---
