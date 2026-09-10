@@ -30,6 +30,9 @@ declare global {
   }
 }
 const app = express();
+app.get("/", (req, res) => {
+  res.redirect("/docs");
+});
 
 app.use(helmet());
 
