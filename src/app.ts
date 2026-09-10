@@ -1,4 +1,4 @@
-import "./types/express";
+
 import express from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -19,7 +19,16 @@ import { createUserRoutes } from "./presentation/routes/user.routes";
 import { errorHandler } from "./presentation/middlewares/errorHandler";
 import { bookTicketController, getAllMatchesController, getAvailableSeatsForMatchSectionController, getMatchByIdController, getSectionsForMatchController } from "./infrastructure/container/matchContainer";
 import { createMatchRoutes } from "./presentation/routes/match.routes";
+import type { User } from "./domain/entities/User";
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+      validated?: unknown;
+    }
+  }
+}
 const app = express();
 
 app.use(helmet());
