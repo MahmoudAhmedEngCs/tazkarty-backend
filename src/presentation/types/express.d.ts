@@ -1,12 +1,8 @@
 import { User } from "../../domain/entities/User";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
-      validated?: unknown;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: User;
+    validated?: unknown;
   }
 }
-
-export {};
