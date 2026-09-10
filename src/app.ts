@@ -42,11 +42,16 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use(express.json({ limit: "10kb" }));
-app.use(
-  "/docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec)
-);
+app.get("/docs", (req, res) => {
+  const html = swaggerUi.generateHTML(swaggerSpec, {
+    customCssUrl:
+      "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
+    customJs:
+      "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
+  });
+
+  res.type("html").send(html);
+});
 
 app.use(
   "/users",
