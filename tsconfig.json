@@ -13,7 +13,7 @@
     "sourceMap": true,
     "declaration": false,
 
-    "types": ["node"]
+   
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
