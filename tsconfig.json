@@ -12,9 +12,9 @@
 
     "sourceMap": true,
     "declaration": false,
-
+"types": ["node", "express"]
    
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+ "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
